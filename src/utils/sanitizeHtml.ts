@@ -1,5 +1,5 @@
 const allowedTags = new Set(["p", "br", "strong", "em", "u", "span"])
-const allowedAttrs = new Set(["style"])
+const allowedAttrs = new Set(["style", "dir", "lang"])
 
 function sanitizeStyle(style: string) {
   const safe: string[] = []
@@ -8,7 +8,15 @@ function sanitizeStyle(style: string) {
     const [rawKey, rawValue] = part.split(":").map((p) => p.trim())
     if (!rawKey || !rawValue) continue
     const key = rawKey.toLowerCase()
-    if (key === "color" || key === "text-align" || key === "font-weight" || key === "font-style" || key === "text-decoration") {
+    if (
+      key === "color" ||
+      key === "text-align" ||
+      key === "font-weight" ||
+      key === "font-style" ||
+      key === "text-decoration" ||
+      key === "direction" ||
+      key === "unicode-bidi"
+    ) {
       safe.push(`${key}:${rawValue}`)
     }
   }

@@ -79,6 +79,8 @@ export async function renderLabelToPng(
   const settings = resolvePrintSettings(label);
   const { widthPx, heightPx } = getPrintPixelSize(settings);
 
+  await document.fonts.ready.catch(() => undefined);
+
   const canvas = await toCanvas(node, {
     cacheBust: true,
     pixelRatio: 1,

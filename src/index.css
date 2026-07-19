@@ -3,7 +3,19 @@
 @tailwind utilities;
 
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family:
+    "Vazirmatn",
+    "Noto Sans Arabic",
+    Tahoma,
+    Arial,
+    "Segoe UI",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Noto Sans",
+    Helvetica,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji";
   line-height: 1.5;
   font-weight: 400;
 
@@ -11,4 +23,14 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.ProseMirror {
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: plaintext;
+}
+
+.ProseMirror p {
+  margin: 0;
 }

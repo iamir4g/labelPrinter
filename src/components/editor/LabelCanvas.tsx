@@ -3,6 +3,7 @@ import { Rnd } from "react-rnd";
 import { cn } from "@/lib/utils";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { useEditorStore } from "@/stores/editorStore";
+import { fontFamilyCss } from "@/utils/fonts";
 import { mmToPx, pxToMm, roundTo } from "@/utils/units";
 
 export default function LabelCanvas() {
@@ -131,14 +132,17 @@ export default function LabelCanvas() {
                     >
                       {el.type === "text" ? (
                         <div
+                          dir="rtl"
+                          lang="fa"
                           className="h-full w-full select-none px-1 py-0.5 text-[12px] leading-tight text-zinc-950"
                           style={{
-                            fontFamily: el.data.fontFamily,
+                            fontFamily: fontFamilyCss(el.data.fontFamily),
                             fontSize: el.data.fontSizePx
                               ? `${el.data.fontSizePx}px`
                               : undefined,
                             color: el.data.color,
-                            textAlign: el.data.align,
+                            textAlign: el.data.align ?? "right",
+                            unicodeBidi: "plaintext",
                           }}
                           dangerouslySetInnerHTML={{ __html: el.data.html }}
                         />

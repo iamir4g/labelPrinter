@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { Template, TemplateElement } from "@/types/template";
+import { DEFAULT_LABEL_FONT } from "@/utils/fonts";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 
 type EditorState = {
@@ -110,9 +111,10 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       locked: false,
       data: {
         html: "<p>متن</p>",
+        fontFamily: DEFAULT_LABEL_FONT,
         fontSizePx: 14,
         color: "#111111",
-        align: "left",
+        align: "right",
       },
     };
     const next: Template = {
