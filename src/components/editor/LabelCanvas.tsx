@@ -3,12 +3,14 @@ import { Rnd } from "react-rnd";
 import { cn } from "@/lib/utils";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { useEditorStore } from "@/stores/editorStore";
+import { prefetchFontEmbedCSS } from "@/utils/exportLabel";
 import { fontFamilyCss } from "@/utils/fonts";
 import { mmToPx, pxToMm, roundTo } from "@/utils/units";
 
 export default function LabelCanvas() {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const setCanvasEl = useCanvasStore((s) => s.setCanvasEl);
+  const canvasEl = useCanvasStore((s) => s.canvasEl);
   const {
     template,
     zoom,
@@ -48,6 +50,14 @@ export default function LabelCanvas() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [deleteSelected, setSelectedElementId]);
+
+  useEffect(() => {
+    if (!canvasEl) return;
+    const idle = window.setTimeout(() => {
+      void prefetchFontEmbedCSS(canvasEl);
+    }, 300);
+    return () => window.clearTimeout(idle);
+  }, [canvasEl]);
 
   if (!template) return null;
 

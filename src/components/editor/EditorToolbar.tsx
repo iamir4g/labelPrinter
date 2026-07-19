@@ -15,9 +15,9 @@ import { useCanvasStore } from "@/stores/canvasStore";
 import { useEditorStore } from "@/stores/editorStore";
 import { useTemplatesStore } from "@/stores/templatesStore";
 import {
-  downloadDataUrl,
+  downloadPngBlob,
   openEmptyPrintWindow,
-  renderLabelToPng,
+  renderLabelToBlobUrl,
   writePrintDocument,
 } from "@/utils/exportLabel";
 import { clampNumber, roundTo } from "@/utils/units";
@@ -139,8 +139,7 @@ export default function EditorToolbar() {
             disabled={!canvasEl}
             onClick={async () => {
               if (!canvasEl) return;
-              const dataUrl = await renderLabelToPng(canvasEl, template.label);
-              downloadDataUrl(`${template.name}.png`, dataUrl);
+              await downloadPngBlob(`${template.name}.png`, canvasEl, template.label);
             }}
           >
             <ZoomIn className="h-4 w-4" />
@@ -153,8 +152,21 @@ export default function EditorToolbar() {
             onClick={async () => {
               if (!canvasEl) return;
               const w = openEmptyPrintWindow();
-              const dataUrl = await renderLabelToPng(canvasEl, template.label);
-              if (w) writePrintDocument(w, dataUrl, template.label);
+              try {
+                const pngUrl = await renderLabelToBlobUrl(
+                  canvasEl,
+                  template.label,
+                );
+                if (w && !w.closed) {
+                  writePrintDocument(w, pngUrl, template.label);
+                  window.setTimeout(() => URL.revokeObjectURL(pngUrl), 60_000);
+                } else {
+                  URL.revokeObjectURL(pngUrl);
+                }
+              } catch (error) {
+                if (w && !w.closed) w.close();
+                console.error(error);
+              }
             }}
           >
             <Printer className="h-4 w-4" />
