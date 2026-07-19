@@ -1,57 +1,77 @@
-# React + TypeScript + Vite
+# Label Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ادیتور تحت وب لیبل با React + TypeScript + Vite برای طراحی، ذخیره و چاپ لیبل‌های حرارتی.
 
-Currently, two official plugins are available:
+## اجرای عادی
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Docker
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### اجرای محیط توسعه با Docker Compose
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+این حالت برای توسعه محلی مناسب است و Vite داخل کانتینر اجرا می‌شود:
+
+```bash
+docker compose up app
 ```
+
+آدرس:
+
+```text
+http://localhost:5173
+```
+
+### اجرای نسخه production با Docker Compose
+
+این حالت پروژه را build می‌کند و خروجی را با Nginx سرو می‌کند:
+
+```bash
+docker compose up --build web
+```
+
+آدرس:
+
+```text
+http://localhost:8080
+```
+
+### ساخت image production
+
+```bash
+docker build -t lable-editor .
+```
+
+### اجرای image production
+
+```bash
+docker run --rm -p 8080:80 lable-editor
+```
+
+## فایل‌های Docker
+
+- `Dockerfile`: build چندمرحله‌ای برای ساخت خروجی Vite و سرو با Nginx
+- `docker-compose.yml`: شامل سرویس توسعه (`app`) و سرویس production (`web`)
+- `docker/nginx/default.conf`: پیکربندی Nginx با fallback برای routeهای React
+- `.dockerignore`: حذف فایل‌های غیرضروری از context داکر
+
+## نکات
+
+- سرویس `app` از volume استفاده می‌کند تا تغییرات سورس فوری داخل کانتینر دیده شوند.
+- برای React Router، در Nginx از `try_files ... /index.html` استفاده شده تا رفرش روی routeهای داخلی خراب نشود.
+- اگر روی بعضی سیستم‌ها hot reload ضعیف بود، `CHOKIDAR_USEPOLLING=true` در compose فعال شده است.
+
+## استقرار روی Liara
+
+برای استقرار با همین Dockerfile، فایل `liara.json` در ریشه پروژه اضافه شده و پورت داخلی برنامه روی `80` تنظیم شده است.
+
+```bash
+npm i -g @liara/cli
+liara login
+liara deploy
+```
+
+اگر برنامه را هنوز در پنل لیارا نساخته‌ای، ابتدا یک Docker App بساز و بعد deploy را اجرا کن.
